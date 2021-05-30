@@ -1,0 +1,24 @@
+- id: precommit-autoupdate
+  name: Run pre-commit autoupdate every time
+  description: This autoupdates the modules.
+  entry: hooks/precommit-autoupdate
+  always_run: true
+  language: script
+- id: kustomize-build
+  name: Validate Kustomize Recipe
+  description: This hook validates that a kustomization.yaml will yield a build
+  entry: hooks/kustomize-build
+  files: '(^)?.ustomization(\.y.+)?'
+  language: script
+- id: kustomize-missing
+  name: All yaml in kustomize manifest
+  description: This hook validates that a kustomization.yaml has all yaml
+  entry: hooks/kustomize-missing
+  language: script
+  always_run: true
+- id: check-all-kustomize
+  name: Check All Kustomize Manifests
+  description: This makes sure all kustomize manifests properly build in the repo
+  entry: hooks/check-all-kustomize
+  always_run: true
+  language: script

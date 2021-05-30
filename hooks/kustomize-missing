@@ -1,0 +1,27 @@
+#!/bin/bash
+set -euo pipefail
+
+for i in $*
+do
+    if [[ ! "$i" == "kustomization.yaml" ]]
+    then
+        echo "skipping $i as it is not a kustomize manifest"
+        continue
+    fi
+    pushd `dirname $i`
+    tmpdir=$(mktemp -d)
+    trap 'rm -rf "$tmpdir"' EXIT
+    foundlist="$tmpdir/found"
+    listedlist="$tmpdir/listed"
+    find . -not -name '\.*' -not -name 'kustomization.yaml' -not -name 'flux-patch.yaml' -name '*.yaml'|sed s,\./,,|sort > $foundlist
+    #cat `basename $i` | grep -vP '(^)?.ustomization(\.y.+)?'|sed 's,/(\+\\.y.ml),$1,g'|sort > $listedlist
+    cat `basename $i` |perl -nle 'if (m#([\w-\/\._]+\.y.?ml)$#) { print $1;}' |sort > $listedlist
+    if ! cmp -s $foundlist $listedlist
+    then
+        echo "===INCONSISTENCY FOUND IN KUSTOMIZE MANIFEST VS. YAML FILES IN DIRECTORY===" 
+        echo "Check $i and the files in its subsequent folders."
+        diff -u $foundlist $listedlist
+        exit 1
+    fi
+    popd
+done
