@@ -10,6 +10,12 @@
   entry: hooks/kustomize-build
   files: '(^)?.ustomization(\.y.+)?'
   language: script
+- id: kustomize-build-windows
+  name: Validate Kustomize Recipe for windows subsystem
+  description: This hook validates that a kustomization.yaml will yield a build
+  entry: hooks/kustomize-build
+  files: '(^)?.ustomization(\.y.+)?'
+  language: script
 - id: kustomize-missing
   name: All yaml in kustomize manifest
   description: This hook validates that a kustomization.yaml has all yaml
